@@ -13,6 +13,9 @@
   "System": "script/main.lua",
   "SaveMemory": false,
   "OpenGL": true,
+  "Freq": 48000,
+  "Channels": 2,
+  "BufferSamples": 2048,
   "KeyConfig": [
     {
       "Joystick": -1,

@@ -4,28 +4,26 @@ module(..., package.seeall)
 --;===========================================================
 --; LOAD DATA
 --;===========================================================
+local dataSavDir = "script/data_sav.lua"
+local configDir = "script/config.json"
+
 -- Data loading from data_sav.lua
-local file = io.open("script/data_sav.lua","r")
+local file = io.open(dataSavDir,"r")
 s_dataLUA = file:read("*all")
 file:close()
 
--- Data loading from config.ssz
-local file = io.open("script/config.json","r")
+-- Data loading from config.json
+local file = io.open(configDir,"r")
 s_configSSZ = file:read("*all")
 file:close()
 resolutionWidth = tonumber(s_configSSZ:match('"Width"%s*:%s*(%d+)'))
 resolutionHeight = tonumber(s_configSSZ:match('"Height"%s*:%s*(%d+)'))
 gameSpeed = tonumber(s_configSSZ:match('"GameSpeed"%s*:%s*(%d+)'))
-b_saveMemory = s_configSSZ:match('"SaveMemory"%s*:%s*([^;%s]+)')
-b_openGL = s_configSSZ:match('"OpenGL"%s*:%s*([^;%s]+)')
-
--- Data loading from sound.ssz
-local file = io.open("lib/sound.ssz","r")
-s_soundSSZ = file:read("*all")
-file:close()
-freq = tonumber(s_soundSSZ:match('const int Freq%s*=%s*(%d+)'))
-channels = tonumber(s_soundSSZ:match('const int Channels%s*=%s*(%d+)'))
-buffer = tonumber(s_soundSSZ:match('const int BufferSamples%s*=%s*(%d+)'))
+b_saveMemory = s_configSSZ:match('"SaveMemory"%s*:%s*([^,%s]+)')
+b_openGL = s_configSSZ:match('"OpenGL"%s*:%s*([^,%s]+)')
+freq = tonumber(s_configSSZ:match('"Freq"%s*:%s*(%d+)'))
+channels = tonumber(s_configSSZ:match('"Channels"%s*:%s*(%d+)'))
+buffer = tonumber(s_configSSZ:match('"BufferSamples"%s*:%s*(%d+)'))
 
 -- Data loading from lifebar
 local file = io.open(data.lifebar,"r")
@@ -171,33 +169,30 @@ function f_saveCfg()
 		['data.sffConversion'] = data.sffConversion
 	}
 	s_dataLUA = f_strSub(s_dataLUA, t_saves)
-	local file = io.open("script/data_sav.lua","w+")
+	local file = io.open(dataSavDir,"w+")
 	file:write(s_dataLUA)
 	file:close()
 	-- Data saving to config.ssz
 	if b_saveMemory then
-		s_saveMemory = s_saveMemory:gsub('"SaveMemory"%s*:%s*[^;%s]+', '"SaveMemory": true')
+		s_saveMemory = s_saveMemory:gsub('"SaveMemory"%s*:%s*[^,%s]+', '"SaveMemory": true')
 	else
-		s_saveMemory = s_saveMemory:gsub('"SaveMemory"%s*:%s*[^;%s]+', '"SaveMemory": false')
+		s_saveMemory = s_saveMemory:gsub('"SaveMemory"%s*:%s*[^,%s]+', '"SaveMemory": false')
 	end
 	if b_openGL then
-		s_configSSZ = s_configSSZ:gsub('"OpenGL"%s*:%s*[^;%s]+', '"OpenGL": true')
+		s_configSSZ = s_configSSZ:gsub('"OpenGL"%s*:%s*[^,%s]+', '"OpenGL": true')
 	else
-		s_configSSZ = s_configSSZ:gsub('"OpenGL"%s*:%s*[^;%s]+', '"OpenGL": false')
+		s_configSSZ = s_configSSZ:gsub('"OpenGL"%s*:%s*[^,%s]+', '"OpenGL": false')
 	end
 	s_configSSZ = s_configSSZ:gsub('"Width"%s*:%s*%d+', '"Width": ' .. resolutionWidth)
 	s_configSSZ = s_configSSZ:gsub('"Height%s"*:%s*%d+', '"Height": ' .. resolutionHeight)
 	s_configSSZ = s_configSSZ:gsub('"GameSpeed"%s*:%s*%d+', '"GameSpeed": ' .. gameSpeed)
-	local file = io.open("script/config.json","w+")
+	s_configSSZ = s_configSSZ:gsub('"Freq"%s*:%s*%d+', '"Freq": ' .. freq)
+	s_configSSZ = s_configSSZ:gsub('"Channels"%s*:%s*%d+', '"Channels": ' .. channels)
+	s_configSSZ = s_configSSZ:gsub('"BufferSamples"%s*:%s*%d+', '"BufferSamples": ' .. buffer)
+	local file = io.open(configDir,"w+")
 	file:write(s_configSSZ)
 	file:close()
-	-- Data saving to sound.ssz
-	s_soundSSZ = s_soundSSZ:gsub('const int Freq%s*=%s*%d+', 'const int Freq = ' .. freq)
-	s_soundSSZ = s_soundSSZ:gsub('const int Channels%s*=%s*%d+', 'const int Channels = ' .. channels)
-	s_soundSSZ = s_soundSSZ:gsub('const int BufferSamples%s*=%s*%d+', 'const int BufferSamples = ' .. buffer)
-	local file = io.open("lib/sound.ssz","w+")
-	file:write(s_soundSSZ)
-	file:close()
+
 	-- Data saving to lifebar
 	s_lifebarDEF = s_lifebarDEF:gsub('match.wins%s*=%s*%d+', 'match.wins = ' .. roundsNum)
 	local file = io.open(data.lifebar,"w+")
