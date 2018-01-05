@@ -10,14 +10,14 @@ s_dataLUA = file:read("*all")
 file:close()
 
 -- Data loading from config.ssz
-local file = io.open("ssz/config.ssz","r")
+local file = io.open("script/config.json","r")
 s_configSSZ = file:read("*all")
 file:close()
-resolutionWidth = tonumber(s_configSSZ:match('const int Width%s*=%s*(%d+)'))
-resolutionHeight = tonumber(s_configSSZ:match('const int Height%s*=%s*(%d+)'))
-gameSpeed = tonumber(s_configSSZ:match('const int GameSpeed%s*=%s*(%d+)'))
-b_saveMemory = s_configSSZ:match('const bool SaveMemory%s*=%s*([^;%s]+)')
-b_openGL = s_configSSZ:match('const bool OpenGL%s*=%s*([^;%s]+)')
+resolutionWidth = tonumber(s_configSSZ:match('"Width"%s*:%s*(%d+)'))
+resolutionHeight = tonumber(s_configSSZ:match('"Height"%s*:%s*(%d+)'))
+gameSpeed = tonumber(s_configSSZ:match('"GameSpeed"%s*:%s*(%d+)'))
+b_saveMemory = s_configSSZ:match('"SaveMemory"%s*:%s*([^;%s]+)')
+b_openGL = s_configSSZ:match('"OpenGL"%s*:%s*([^;%s]+)')
 
 -- Data loading from sound.ssz
 local file = io.open("lib/sound.ssz","r")
@@ -176,19 +176,19 @@ function f_saveCfg()
 	file:close()
 	-- Data saving to config.ssz
 	if b_saveMemory then
-		s_saveMemory = s_saveMemory:gsub('const bool SaveMemory%s*=%s*[^;%s]+', 'const bool SaveMemory = true')
+		s_saveMemory = s_saveMemory:gsub('"SaveMemory"%s*:%s*[^;%s]+', '"SaveMemory": true')
 	else
-		s_saveMemory = s_saveMemory:gsub('const bool SaveMemory%s*=%s*[^;%s]+', 'const bool SaveMemory = false')
+		s_saveMemory = s_saveMemory:gsub('"SaveMemory"%s*:%s*[^;%s]+', '"SaveMemory": false')
 	end
 	if b_openGL then
-		s_configSSZ = s_configSSZ:gsub('const bool OpenGL%s*=%s*[^;%s]+', 'const bool OpenGL = true')
+		s_configSSZ = s_configSSZ:gsub('"OpenGL"%s*:%s*[^;%s]+', '"OpenGL": true')
 	else
-		s_configSSZ = s_configSSZ:gsub('const bool OpenGL%s*=%s*[^;%s]+', 'const bool OpenGL = false')
+		s_configSSZ = s_configSSZ:gsub('"OpenGL"%s*:%s*[^;%s]+', '"OpenGL": false')
 	end
-	s_configSSZ = s_configSSZ:gsub('const int Width%s*=%s*%d+', 'const int Width = ' .. resolutionWidth)
-	s_configSSZ = s_configSSZ:gsub('const int Height%s*=%s*%d+', 'const int Height = ' .. resolutionHeight)
-	s_configSSZ = s_configSSZ:gsub('const int GameSpeed%s*=%s*%d+', 'const int GameSpeed = ' .. gameSpeed)
-	local file = io.open("ssz/config.ssz","w+")
+	s_configSSZ = s_configSSZ:gsub('"Width"%s*:%s*%d+', '"Width": ' .. resolutionWidth)
+	s_configSSZ = s_configSSZ:gsub('"Height%s"*:%s*%d+', '"Height": ' .. resolutionHeight)
+	s_configSSZ = s_configSSZ:gsub('"GameSpeed"%s*:%s*%d+', '"GameSpeed": ' .. gameSpeed)
+	local file = io.open("script/config.json","w+")
 	file:write(s_configSSZ)
 	file:close()
 	-- Data saving to sound.ssz

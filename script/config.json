@@ -8,8 +8,11 @@
   "Width": 640,
   "Height": 480,
   "Super.TargetDefenceMul": 1.5,
+  "GameSpeed": 60,
   "LifebarFontScale": 0.5,
   "System": "script/main.lua",
+  "SaveMemory": false,
+  "OpenGL": true,
   "KeyConfig": [
     {
       "Joystick": -1,
