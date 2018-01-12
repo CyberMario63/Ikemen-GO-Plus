@@ -33,7 +33,7 @@ var sys = System{
 	lifeMul:    1, team1VS2Life: 1,
 	turnsRecoveryRate: 1.0 / 300,
 	mixer:             *newMixer(),
-	bgm:               *newBGM(),
+	bgm:               *newVorbis(),
 	sounds:            newSounds(16),
 	allPalFX:          *newPalFX(),
 	bgPalFX:           *newPalFX(),
@@ -83,7 +83,7 @@ type System struct {
 	debugScript             string
 	debugDraw               bool
 	mixer                   Mixer
-	bgm                     BGM
+	bgm                     Vorbis
 	audioContext            *openal.Context
 	nullSndBuf              [audioOutLen * 2]int16
 	sounds                  Sounds

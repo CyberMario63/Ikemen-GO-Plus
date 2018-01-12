@@ -3,13 +3,11 @@ package main
 import (
 	"encoding/binary"
 	"fmt"
-	"github.com/hajimehoshi/go-mp3"
 	"github.com/jfreymuth/go-vorbis/ogg/vorbis"
 	"github.com/timshannon/go-openal/openal"
 	"io"
 	"math"
 	"os"
-	"path/filepath"
 )
 
 const (
@@ -302,45 +300,6 @@ func (v *Vorbis) read() []int16 {
 		}
 	}
 	return sys.nullSndBuf[:]
-}
-
-type BGM struct {
-	ext    string
-	vorbis *Vorbis
-	mp3Dec *mp3.Decoder
-}
-
-func newBGM() *BGM {
-	return &BGM{}
-}
-
-func (bgm *BGM) Open(fileName string) {
-	var file, err = os.Open(fileName)
-	if err != nil {
-		return
-	}
-	defer file.Close()
-
-	bgm.ext = filepath.Ext(fileName)
-	switch bgm.ext {
-	case ".ogg":
-		bgm.vorbis = newVorbis()
-		bgm.vorbis.Open(fileName)
-	case ".mp3":
-		bgm.mp3Dec, _ = mp3.NewDecoder(file)
-	}
-}
-
-func (bgm *BGM) read() []int16 {
-	switch bgm.ext {
-	case ".ogg":
-		return bgm.vorbis.read()
-	case ".mp3":
-		var err = bgm.mp3Dec.readFrame()
-		return bgm.mp3Dec.buf
-	default:
-		return sys.nullSndBuf[:]
-	}
 }
 
 type Wave struct {
